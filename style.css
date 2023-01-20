@@ -3,13 +3,16 @@ main {
 }
 
 .board {
-    display: inline-grid;
+    display: grid;
     grid-template-columns: 100px 100px 100px 100px 100px 100px 100px 100px;
     grid-template-rows: 100px 100px 100px 100px 100px 100px 100px 100px;
+    width: 835px;
+    height: 835px;
     column-gap: 5px;
     row-gap: 5px;
     background-color: black;
     border: 5px solid black;
+    margin: auto;
 }
 
 .board > div {

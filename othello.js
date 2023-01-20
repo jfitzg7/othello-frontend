@@ -1,8 +1,6 @@
 const WHITE_DISK = 1;
 const BLACK_DISK = -1;
 const NO_DISK = 0;
-const squaresList = document.querySelectorAll(".square")
-let whosTurn = BLACK_DISK;
 const startingBoard = [[0, 0, 0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0, 0],
@@ -11,9 +9,14 @@ const startingBoard = [[0, 0, 0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0, 0]];
-let currentBoard = startingBoard
+
+// Use a trick to deep clone the startingBoard
+// https://dev.to/samanthaming/how-to-deep-clone-an-array-in-javascript-3cig
+let currentBoard = JSON.parse(JSON.stringify(startingBoard));
+let whosTurn = BLACK_DISK;
 
 function addPiece(e) {
+    console.time("addPiece execution time");
     const validMovesList = getValidMoves(currentBoard, whosTurn);
     const squareNum = e.srcElement.id.substring(6);
     if (validMovesList.includes(squareNum)) {
@@ -26,6 +29,7 @@ function addPiece(e) {
             whosTurn = BLACK_DISK;
         }
     }
+    console.timeEnd("addPiece execution time")
 }
 
 function getValidMoves(board, player) {
@@ -100,9 +104,9 @@ function updateBoard(action, player) {
         for (let delta_y = -1; delta_y < 2; delta_y++) {
             if (!(delta_x == 0 && delta_y == 0)) {
                 killCount = getNumKilledEnemy(currentBoard, player, x, y, delta_x, delta_y);
-                for (let i = 0; i < killCount; i++) {
-                    dx = (i + 1) * delta_x;
-                    dy = (i + 1) * delta_y;
+                for (let i = 1; i <= killCount; i++) {
+                    dx = i * delta_x;
+                    dy = i * delta_y;
                     currentBoard[x + dx][y + dy] = player;
                     updateSquareElement((x + dx) * 8 + y + dy, player);
                 }
@@ -128,6 +132,34 @@ function updateSquareElement(squareNum, player) {
     square.appendChild(piece);
 }
 
+function startNewGame(e) {
+    currentBoard = JSON.parse(JSON.stringify(startingBoard));
+    whosTurn = BLACK_DISK
+    resetSquareElements();
+}
+
+function resetSquareElements() {
+    squaresList.forEach(square => {
+        square.innerHTML = "";
+        const squareNum = square.id.substring(6);
+        const piece = document.createElement("div");
+        piece.id = "piece" + squareNum;
+        if (squareNum == 28 || squareNum == 35) {
+            piece.classList.add("black-piece");
+        }
+        else if (squareNum == 27 || squareNum == 36) {
+            piece.classList.add("white-piece");
+        }
+        square.appendChild(piece);
+    });
+}
+
+const squaresList = document.querySelectorAll(".square")
+
 squaresList.forEach(square => {
     square.addEventListener('click', addPiece)
-})
+});
+
+const newGameBtn = document.querySelector("#new-game-btn");
+
+newGameBtn.addEventListener('click', startNewGame);
