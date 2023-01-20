@@ -16,10 +16,17 @@ let currentBoard = JSON.parse(JSON.stringify(startingBoard));
 let whosTurn = BLACK_DISK;
 
 function addPiece(e) {
-    console.time("addPiece execution time");
+    // console.time("addPiece execution time");
+    if (!e.srcElement.classList.contains("square")) {
+        return
+    }
+    console.log(e)
     const validMovesList = getValidMoves(currentBoard, whosTurn);
-    const squareNum = e.srcElement.id.substring(6);
+    const squareNum = Number(e.srcElement.id.substring(6));
     if (validMovesList.includes(squareNum)) {
+        console.log(validMovesList)
+        console.log(e.srcElement.id)
+        console.log(`adding piece to square: ${squareNum}`)
         if (whosTurn === BLACK_DISK) {
             updateBoard(squareNum, BLACK_DISK);
             whosTurn = WHITE_DISK;
@@ -29,28 +36,30 @@ function addPiece(e) {
             whosTurn = BLACK_DISK;
         }
     }
-    console.timeEnd("addPiece execution time")
+    // console.timeEnd("addPiece execution time")
 }
 
 function getValidMoves(board, player) {
     let validMovesList = [];
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board.length; j++) {
-            if (
-                getNumKilledEnemy(board, player, i, j, 1, 1) ||
-                getNumKilledEnemy(board, player, i, j, 1, 0) ||
-                getNumKilledEnemy(board, player, i, j, 1, -1) ||
-                getNumKilledEnemy(board, player, i, j, -1, 1) ||
-                getNumKilledEnemy(board, player, i, j, -1, 0) ||
-                getNumKilledEnemy(board, player, i, j, -1, -1) ||
-                getNumKilledEnemy(board, player, i, j, 0, 1) ||
-                getNumKilledEnemy(board, player, i, j, 0, -1)
-            ) {
-                validMovesList.push((i * 8 + j) + "");
+            if (board[i][j] == 0 && canTrapEnemyPieces(board, player, i, j)) {
+                validMovesList.push((i * 8 + j));
             }
         }
     }
     return validMovesList;
+}
+
+function canTrapEnemyPieces(board, player, i, j) {
+    return getNumKilledEnemy(board, player, i, j, 1, 1) ||
+        getNumKilledEnemy(board, player, i, j, 1, 0) ||
+        getNumKilledEnemy(board, player, i, j, 1, -1) ||
+        getNumKilledEnemy(board, player, i, j, -1, 1) ||
+        getNumKilledEnemy(board, player, i, j, -1, 0) ||
+        getNumKilledEnemy(board, player, i, j, -1, -1) ||
+        getNumKilledEnemy(board, player, i, j, 0, 1) ||
+        getNumKilledEnemy(board, player, i, j, 0, -1);
 }
 
 function getNumKilledEnemy(board, player, x, y, deltaX, deltaY) {
