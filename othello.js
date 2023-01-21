@@ -12,31 +12,45 @@ const startingBoard = [[0, 0, 0, 0, 0, 0, 0, 0],
 
 // Use a trick to deep clone the startingBoard
 // https://dev.to/samanthaming/how-to-deep-clone-an-array-in-javascript-3cig
-let currentBoard = JSON.parse(JSON.stringify(startingBoard));
+let currentBoard = JSON.parse(JSON.stringify(startingBoard));;
 let whosTurn = BLACK_DISK;
+let gameOver = false;
 
 function addPiece(e) {
-    // console.time("addPiece execution time");
-    if (!e.srcElement.classList.contains("square")) {
+    if (!e.srcElement.classList.contains("square") || gameOver) {
         return
     }
-    console.log(e)
+
     const validMovesList = getValidMoves(currentBoard, whosTurn);
+
+    if (!validMovesList && !getValidMoves(currentBoard, -whosTurn)) {
+        // determine the game winner
+        gameOver = true;
+        let counts = new Map();
+        for (let i = 0; i < currentBoard.length; i++) {
+            for (let j = 0; j < currentBoard.length; j++) {
+                if (counts.has(currentBoard[i][j])) {
+                    counts[currentBoard[i][j]] = counts[currentBoard[i][j]] + 1;
+                }
+                else {
+                    counts[currentBoard[i][j]] = 1;
+                }
+            }
+        }
+        console.log("Game Over!");
+        console.log(counts);
+    }
+
     const squareNum = Number(e.srcElement.id.substring(6));
     if (validMovesList.includes(squareNum)) {
-        console.log(validMovesList)
-        console.log(e.srcElement.id)
-        console.log(`adding piece to square: ${squareNum}`)
         if (whosTurn === BLACK_DISK) {
             updateBoard(squareNum, BLACK_DISK);
-            whosTurn = WHITE_DISK;
         }
         else {
             updateBoard(squareNum, WHITE_DISK);
-            whosTurn = BLACK_DISK;
         }
     }
-    // console.timeEnd("addPiece execution time")
+    whosTurn = -whosTurn
 }
 
 function getValidMoves(board, player) {
@@ -117,33 +131,33 @@ function updateBoard(action, player) {
                     dx = i * delta_x;
                     dy = i * delta_y;
                     currentBoard[x + dx][y + dy] = player;
-                    updateSquareElement((x + dx) * 8 + y + dy, player);
+                    addPieceToSquareElement((x + dx) * 8 + y + dy, player);
                 }
             }
         }
     }
     currentBoard[x][y] = player;
-    updateSquareElement(x * 8 + y, player);
+    addPieceToSquareElement(x * 8 + y, player);
 }
 
-function updateSquareElement(squareNum, player) {
+function addPieceToSquareElement(squareNum, color) {
     const square = document.querySelector(`#square${squareNum}`);
-    const piece = document.createElement("div")
+    const piece = document.createElement("div");
     piece.id = "piece" + squareNum;
-    if (player == BLACK_DISK) {
-        piece.classList.add("black-piece")
+    if (color == BLACK_DISK) {
+        piece.classList.add("black-piece");
     }
-    else {
-        piece.classList.add("white-piece")
+    else if (color == WHITE_DISK) {
+        piece.classList.add("white-piece");
     }
-
     square.innerHTML = "";
     square.appendChild(piece);
 }
 
-function startNewGame(e) {
+function startNewGame() {
     currentBoard = JSON.parse(JSON.stringify(startingBoard));
-    whosTurn = BLACK_DISK
+    whosTurn = BLACK_DISK;
+    gameOver = false;
     resetSquareElements();
 }
 
@@ -151,15 +165,12 @@ function resetSquareElements() {
     squaresList.forEach(square => {
         square.innerHTML = "";
         const squareNum = square.id.substring(6);
-        const piece = document.createElement("div");
-        piece.id = "piece" + squareNum;
         if (squareNum == 28 || squareNum == 35) {
-            piece.classList.add("black-piece");
+            addPieceToSquareElement(squareNum, BLACK_DISK);
         }
         else if (squareNum == 27 || squareNum == 36) {
-            piece.classList.add("white-piece");
+            addPieceToSquareElement(squareNum, WHITE_DISK);
         }
-        square.appendChild(piece);
     });
 }
 
