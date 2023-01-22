@@ -31,6 +31,10 @@ main {
     margin: 10%;
 }
 
+.no-piece {
+    
+}
+
 .square {
     background-color: green;
 }

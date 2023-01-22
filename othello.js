@@ -22,8 +22,12 @@ function addPiece(e) {
     }
 
     const validMovesList = getValidMoves(currentBoard, whosTurn);
+    const opponentValidMovesList = getValidMoves(currentBoard, -whosTurn);
+    const squareNum = Number(e.srcElement.id.substring(6));
+    console.log(validMovesList);
+    console.log(`Whos Turn: ${whosTurn}`);
 
-    if (!validMovesList && !getValidMoves(currentBoard, -whosTurn)) {
+    if (validMovesList.length == 0 && opponentValidMovesList.length == 0) {
         // determine the game winner
         gameOver = true;
         let counts = new Map();
@@ -41,16 +45,20 @@ function addPiece(e) {
         console.log(counts);
     }
 
-    const squareNum = Number(e.srcElement.id.substring(6));
-    if (validMovesList.includes(squareNum)) {
+    else if (validMovesList.length == 0) {
+        console.log(`Player ${whosTurn} must pass their turn`);
+        whosTurn = -whosTurn;
+    }
+
+    else if (validMovesList.includes(squareNum)) {
         if (whosTurn === BLACK_DISK) {
             updateBoard(squareNum, BLACK_DISK);
         }
         else {
             updateBoard(squareNum, WHITE_DISK);
         }
+        whosTurn = -whosTurn;
     }
-    whosTurn = -whosTurn
 }
 
 function getValidMoves(board, player) {
