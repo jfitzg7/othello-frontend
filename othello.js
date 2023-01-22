@@ -16,9 +16,9 @@ let currentBoard = JSON.parse(JSON.stringify(startingBoard));;
 let whosTurn = BLACK_DISK;
 let gameOver = false;
 
-function addPiece(e) {
+function makeMove(e) {
     if (!e.srcElement.classList.contains("square") || gameOver) {
-        return
+        return;
     }
 
     const validMovesList = getValidMoves(currentBoard, whosTurn);
@@ -28,26 +28,13 @@ function addPiece(e) {
     console.log(`Whos Turn: ${whosTurn}`);
 
     if (validMovesList.length == 0 && opponentValidMovesList.length == 0) {
-        // determine the game winner
-        gameOver = true;
-        let counts = new Map();
-        for (let i = 0; i < currentBoard.length; i++) {
-            for (let j = 0; j < currentBoard.length; j++) {
-                if (counts.has(currentBoard[i][j])) {
-                    counts[currentBoard[i][j]] = counts[currentBoard[i][j]] + 1;
-                }
-                else {
-                    counts[currentBoard[i][j]] = 1;
-                }
-            }
-        }
-        console.log("Game Over!");
-        console.log(counts);
+        handleGameOver();
+        return;
     }
 
     else if (validMovesList.length == 0) {
         console.log(`Player ${whosTurn} must pass their turn`);
-        whosTurn = -whosTurn;
+        whosTurn = -whosTurn
     }
 
     else if (validMovesList.includes(squareNum)) {
@@ -71,6 +58,19 @@ function getValidMoves(board, player) {
         }
     }
     return validMovesList;
+}
+
+function handleGameOver(currentBoard) {
+    gameOver = true;
+    let counts = {};
+    for (let i = 0; i < currentBoard.length; i++) {
+        for (let j = 0; j < currentBoard.length; j++) {
+            const squareVal = currentBoard[i][j];
+            counts[squareVal] = counts[squareVal] ? counts[squareVal] + 1 : 1;
+        }
+    }
+    console.log("Game Over!");
+    console.log(counts);
 }
 
 function canTrapEnemyPieces(board, player, i, j) {
@@ -166,10 +166,10 @@ function startNewGame() {
     currentBoard = JSON.parse(JSON.stringify(startingBoard));
     whosTurn = BLACK_DISK;
     gameOver = false;
-    resetSquareElements();
+    resetSquareElementsToStartingPosition();
 }
 
-function resetSquareElements() {
+function resetSquareElementsToStartingPosition() {
     squaresList.forEach(square => {
         square.innerHTML = "";
         const squareNum = square.id.substring(6);
@@ -185,7 +185,7 @@ function resetSquareElements() {
 const squaresList = document.querySelectorAll(".square")
 
 squaresList.forEach(square => {
-    square.addEventListener('click', addPiece)
+    square.addEventListener('click', makeMove)
 });
 
 const newGameBtn = document.querySelector("#new-game-btn");
