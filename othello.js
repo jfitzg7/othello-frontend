@@ -1,3 +1,7 @@
+const squaresList = document.querySelectorAll(".square");
+const newGameBtn = document.querySelector("#new-game-btn");
+const scoreBoard = document.querySelector(".scoreboard");
+
 const WHITE_DISK = 1;
 const BLACK_DISK = -1;
 const NO_DISK = 0;
@@ -15,8 +19,9 @@ const startingBoard = [[0, 0, 0, 0, 0, 0, 0, 0],
 let currentBoard = JSON.parse(JSON.stringify(startingBoard));;
 let whosTurn = BLACK_DISK;
 let gameOver = false;
+let scores = {WHITE_DISK: 2, BLACK_DISK: 2};
 
-function makeMove(e) {
+function handleMove(e) {
     if (!e.srcElement.classList.contains("square") || gameOver) {
         return;
     }
@@ -27,24 +32,25 @@ function makeMove(e) {
     console.log(validMovesList);
     console.log(`Whos Turn: ${whosTurn}`);
 
-    if (validMovesList.length == 0 && opponentValidMovesList.length == 0) {
-        handleGameOver();
-        return;
-    }
-
-    else if (validMovesList.length == 0) {
-        console.log(`Player ${whosTurn} must pass their turn`);
-        whosTurn = -whosTurn
-    }
-
-    else if (validMovesList.includes(squareNum)) {
+    if (validMovesList.includes(squareNum)) {
         if (whosTurn === BLACK_DISK) {
             updateBoard(squareNum, BLACK_DISK);
         }
         else {
             updateBoard(squareNum, WHITE_DISK);
         }
+        scores = updateScores();
         whosTurn = -whosTurn;
+    }
+
+    if (validMovesList.length == 0 && opponentValidMovesList.length == 0) {
+        handleGameOver(currentBoard);
+        return;
+    }
+
+    else if (validMovesList.length == 0) {
+        console.log(`Player ${whosTurn} must pass their turn`);
+        whosTurn = -whosTurn
     }
 }
 
@@ -182,12 +188,25 @@ function resetSquareElementsToStartingPosition() {
     });
 }
 
-const squaresList = document.querySelectorAll(".square")
+function updateScores() {
+    let counts = {};
+    for (let i = 0; i < currentBoard.length; i++) {
+        for (let j = 0; j < currentBoard.length; j++) {
+            const squareVal = currentBoard[i][j];
+            counts[squareVal] = counts[squareVal] ? counts[squareVal] + 1 : 1;
+        }
+    }
+    const whiteScore = scoreBoard.querySelector("#white-score");
+    const blackScore = scoreBoard.querySelector("#black-score");
+    whiteScore.textContent = counts[WHITE_DISK]
+    blackScore.textContent = counts[BLACK_DISK]
+    return counts
+}
 
 squaresList.forEach(square => {
-    square.addEventListener('click', makeMove)
+    square.addEventListener('click', handleMove)
 });
 
-const newGameBtn = document.querySelector("#new-game-btn");
-
 newGameBtn.addEventListener('click', startNewGame);
+
+

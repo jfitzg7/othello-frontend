@@ -4,11 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Othello Frontend</title>
+    <title>Othello Web App</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="sidebar">
+        <button id="new-game-btn" type="button">New Game</button>
+    </div>
     <main>
+        <div class="scoreboard">
+            <p>Black's score: <span id="black-score">2</span></p>
+            <p>White's score: <span id="white-score">2</span></p>
+        </div>
         <div class="board">
             <div id="square0" class="square"></div>
             <div id="square1" class="square"></div>
@@ -83,7 +90,6 @@
             <div id="square62" class="square"></div>
             <div id="square63" class="square"></div>
         </div>
-        <button id="new-game-btn" type="button">New Game</button>
     </main>
     <script type="text/javascript" src="othello.js"></script>
 </body>

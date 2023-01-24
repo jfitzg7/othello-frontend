@@ -1,18 +1,22 @@
 main {
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.scoreboard {
+    text-align: center;
 }
 
 .board {
-    display: grid;
+    display: inline-grid;
     grid-template-columns: 100px 100px 100px 100px 100px 100px 100px 100px;
     grid-template-rows: 100px 100px 100px 100px 100px 100px 100px 100px;
-    width: 835px;
-    height: 835px;
     column-gap: 5px;
     row-gap: 5px;
     background-color: black;
     border: 5px solid black;
-    margin: auto;
+    margin: 0 auto;
 }
 
 .white-piece {
