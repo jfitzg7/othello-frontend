@@ -1,3 +1,7 @@
+body {
+    background: lightslategray;
+}
+
 main {
     height: 100vh;
     display: flex;
@@ -5,6 +9,49 @@ main {
 }
 
 .scoreboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    height: 100px;
+    width: 835px;
+    border-radius: 10px;
+    margin: 0 auto 10px;
+}
+
+.scoreboard > div {
+    display: flex;
+}
+
+#black-score-logo {
+    display: inline-block;
+    background: black;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
+#black-score {
+    display: inline-block;
+    height: 50px;
+    width: 50px;
+    line-height: 50px;
+    text-align: center;
+}
+
+#white-score-logo {
+    display: inline-block;
+    background: white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
+#white-score {
+    display: inline-block;
+    height: 50px;
+    width: 50px;
+    line-height: 50px;
     text-align: center;
 }
 
